@@ -47,7 +47,7 @@ module Api
         params.require(:event).permit(:name, :event_date, :event_time, :status, :user_id, :venue_id)
       end
 
-      def set_venue
+      def set_event
         @event = Event.find(params[:id])
       end
     end

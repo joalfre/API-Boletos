@@ -2,14 +2,18 @@ module Api
   module V1
     class TicketsController < ApplicationController
       before_action :set_event
+      before_action :set_user
       before_action :set_event_ticket, only: [:show, :update, :destroy]
+      before_action :authorized
 
       def index
         render json: {status: 'Exitoso', message: 'Tickets Cargados', date: @event.tickets}, status: :ok
       end
 
       def create
-        @ticket = @event.tickets.new(ticket_params, )
+        puts ticket_params
+        puts @user
+        @ticket = @event.tickets.new(ticket_params)
         if verify_quantities(params[:event_id], params[:quantities]) < 0
           render json: {status: 'Error', message: 'Supera el limite de entradas ', date: verify_quantities(params[:event_id], params[:quantities])}, status: :ok
         else
@@ -43,11 +47,16 @@ module Api
 
       private
       def ticket_params
-        params.permit(:cost, :quantities, [:event_id, :user_id])
+        #params.permit(:cost, :quantities, [:event_id, :user_id])
+        params.require(:ticket).permit(:cost, :quantities, [:event_id, :user_id => @user.id])
       end
 
       def set_event
         @event = Event.find(params[:event_id])
+      end
+
+      def set_user
+        @user = User.find(params[:user_id])
       end
 
       def set_event_ticket

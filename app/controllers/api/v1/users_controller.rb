@@ -1,7 +1,8 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authorized, only: [:auto_login]
+      before_action :authorized, only: [:auto_login, :create, :update]
+      before_action :set_user, only: [:show, :update]
       #before_action :authorized
 
       def index
@@ -11,7 +12,7 @@ module Api
 
       def create
         if validate_create != "ADMINISTRADOR"
-         render json: {status: 'Error', message: 'Debes der ADMINISTRADOR'}, status: :ok
+        render json: {status: 'Error', message: 'Debes der ADMINISTRADOR'}, status: :ok
         else
           @user = User.create(user_params)
           if @user.valid?
@@ -31,7 +32,7 @@ module Api
         if validate_create != "ADMINISTRADOR"
           render json: {status: 'Error', message: 'Debes der ADMINISTRADOR'}, status: :ok
         else
-          if @venue.update(user_params)
+          if @user.update(user_params)
             render json: {status: 'Exitoso', message: 'Usuario Actualizado', date: @user}, status: :ok
           else
             render json: {status: 'Fallido', message: 'Usuario NO Actualizado', date: @user.errors}, status: :unprocessable_entity
@@ -43,8 +44,7 @@ module Api
         @user = User.find_by(username: params[:username])
         if @user && @user.authenticate(params[:password])
           token = encode_token({user_id: @user.id})
-          render json: {user: @user, token: token}
-          #render json: {status: 'Exitoso', message: 'Usuario Logueado', user: @user, token: token}
+          render json: {status: 'Exitoso', message: 'Usuario Logueado', user: @user, token: token}
         else
           render json: {status: 'Fallido', message: 'Usuario No existe'}, status: :unprocessable_entity
         end
@@ -57,8 +57,8 @@ module Api
       private
 
       def user_params
-        #params.permit(:username, :password, :rol)
-        params.require(:user).permit(:username, :password, :rol)
+        params.permit(:username, :password, :rol, :name, :email)
+        #params.require(:user).permit(:username, :password, :rol)
       end
 
       def set_user
@@ -66,7 +66,7 @@ module Api
       end
 
       def validate_create
-        return @user.rol
+       return @user.rol
       end
     end
   end

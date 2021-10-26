@@ -3,18 +3,12 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :venues
-      post "events/cancel", to: "events#cancel"
+      #post "events/cancel", to: "events#cancel"
       resources :events do
         resources :tickets
       end
-      #resources :users
-
-      #post :login, to: 'auth#create'
-      # post :users, to: 'users#create'
-      # get :users, to: 'users#index'
-      # post :login, to: 'auth#create'
-      #
-      resource :users, only: [:create]
+      #resource :users, only: [:create]
+      resources :users
       post "/login", to: "users#login"
       get "/auto_login", to: "users#auto_login"
     end
