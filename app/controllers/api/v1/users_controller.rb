@@ -1,8 +1,8 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      #before_action :authorized, only: [:auto_login]
-      before_action :authorized
+      before_action :authorized, only: [:auto_login, :create, :update]
+      #before_action :authorized
 
       def create
         if validate_create != "ADMINISTRADOR"
