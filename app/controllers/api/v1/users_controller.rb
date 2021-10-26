@@ -1,12 +1,17 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authorized, only: [:auto_login, :create, :update]
+      before_action :authorized, only: [:auto_login]
       #before_action :authorized
+
+      def index
+        @users = User.all
+        render json: {status: 'Exitoso', message: 'Usuarios Cargados', date: @users}, status: :ok
+      end
 
       def create
         if validate_create != "ADMINISTRADOR"
-          render json: {status: 'Error', message: 'Debes der ADMINISTRADOR'}, status: :ok
+         render json: {status: 'Error', message: 'Debes der ADMINISTRADOR'}, status: :ok
         else
           @user = User.create(user_params)
           if @user.valid?
@@ -36,12 +41,12 @@ module Api
 
       def login
         @user = User.find_by(username: params[:username])
-
         if @user && @user.authenticate(params[:password])
           token = encode_token({user_id: @user.id})
-          render json: {status: 'Exitoso', message: 'Usuario Logueado', user: @user, token: token}
+          render json: {user: @user, token: token}
+          #render json: {status: 'Exitoso', message: 'Usuario Logueado', user: @user, token: token}
         else
-          render json: {status: 'Fallido', message: 'Usuario No existe', date: @user.errors}, status: :unprocessable_entity
+          render json: {status: 'Fallido', message: 'Usuario No existe'}, status: :unprocessable_entity
         end
       end
 
@@ -50,8 +55,14 @@ module Api
       end
 
       private
+
       def user_params
-        params.permit(:username, :password, :rol)
+        #params.permit(:username, :password, :rol)
+        params.require(:user).permit(:username, :password, :rol)
+      end
+
+      def set_user
+        @user = User.find(params[:id])
       end
 
       def validate_create
