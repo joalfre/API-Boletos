@@ -1,18 +1,22 @@
 module Api
   module V1
     class TicketsController < ApplicationController
-      before_action :set_event
-      before_action :set_user
-      before_action :set_event_ticket, only: [:show, :update, :destroy]
       before_action :authorized
+      before_action :set_event
+      #before_action :set_user
+      before_action :set_event_ticket, only: [:show, :update, :destroy]
 
       def index
+        @tickets = Ticket.all
         render json: {status: 'Exitoso', message: 'Tickets Cargados', date: @event.tickets}, status: :ok
       end
 
       def create
-        puts ticket_params
-        puts @user
+        ticket_params = {}
+        ticket_params[:cost] = params[:cost]
+        ticket_params[:quantities] = params[:quantities]
+        ticket_params[:user_id] = @user.id
+        ticket_params[:event_id] = @event.id
         @ticket = @event.tickets.new(ticket_params)
         if verify_quantities(params[:event_id], params[:quantities]) < 0
           render json: {status: 'Error', message: 'Supera el limite de entradas ', date: verify_quantities(params[:event_id], params[:quantities])}, status: :ok
@@ -30,10 +34,14 @@ module Api
       end
 
       def update
-        if @ticket.update(event_params)
-          render json: {status: 'Exitoso', message: 'Ticket Actualizado', date: @ticket }, status: :ok
+        if verify_quantities(params[:event_id], params[:quantities]) < 0
+          render json: {status: 'Error', message: 'Supera el limite de entradas ', date: verify_quantities(params[:event_id], params[:quantities])}, status: :ok
         else
-          render json: {status: 'Fallido', message: 'Ticket NO Actualizado', date: @ticket.errors}, status: :unprocessable_entity
+          if @ticket.update(ticket_params_up)
+            render json: {status: 'Exitoso', message: 'Ticket Actualizado', date: @ticket }, status: :ok
+          else
+            render json: {status: 'Fallido', message: 'Ticket NO Actualizado', date: @ticket.errors}, status: :unprocessable_entity
+          end
         end
       end
 
@@ -46,9 +54,9 @@ module Api
       end
 
       private
-      def ticket_params
+      def ticket_params_up
         #params.permit(:cost, :quantities, [:event_id, :user_id])
-        params.require(:ticket).permit(:cost, :quantities, [:event_id, :user_id => @user.id])
+       params.require(:ticket).permit(:cost, :quantities, :event_id, :user_id)
       end
 
       def set_event
@@ -56,7 +64,7 @@ module Api
       end
 
       def set_user
-        @user = User.find(params[:user_id])
+       @user = User.find(params[:user_id])
       end
 
       def set_event_ticket
@@ -78,6 +86,5 @@ module Api
         return  diponibles
       end
     end
-
   end
 end

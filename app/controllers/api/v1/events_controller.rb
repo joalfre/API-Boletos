@@ -15,7 +15,6 @@ module Api
       end
 
       def create
-        #@event = Event.new(event_params)
         @event = @user.events.new(event_params)
         if @event.save
           render json: {status: 'Exitoso', message: 'Evento Creado', date: @event}, status: :ok
@@ -43,10 +42,8 @@ module Api
       private
 
       def event_params
-        #params.permit(:name, :event_date, :event_time, :status, :user_id, :venue_id)
         params.require(:event).permit(:name, :event_date, :event_time, :status, :user_id, :venue_id)
       end
-
       def set_event
         @event = Event.find(params[:id])
       end
