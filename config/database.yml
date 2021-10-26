@@ -86,7 +86,9 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   database: proyec_api_production
   username: proyec_api
-  password: <%= ENV['PROYEC_API_DATABASE_PASSWORD'] %>
+  password: proyec_api
