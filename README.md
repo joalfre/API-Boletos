@@ -130,13 +130,13 @@ DELETE https://hidden-hamlet-36350.herokuapp.com/api/v1/events/id
 Tickets
 
 Ver Tickets
-GET https://hidden-hamlet-36350.herokuapp.com/api/v1/events/2/tickets
+GET https://hidden-hamlet-36350.herokuapp.com/api/v1/events/id/tickets
 
 Ver Ticket
-GET https://hidden-hamlet-36350.herokuapp.com/api/v1/events/2/tickets
+GET https://hidden-hamlet-36350.herokuapp.com/api/v1/events/id/tickets/id
 
 Creación de un Ticket
-POST https://hidden-hamlet-36350.herokuapp.com/api/v1/events/2/tickets
+POST https://hidden-hamlet-36350.herokuapp.com/api/v1/events/id/tickets
 El campo capacidad solo admite enteros positivos
 
 {
@@ -145,8 +145,8 @@ El campo capacidad solo admite enteros positivos
 }
 
 Actualizar tickets
-PUT https://hidden-hamlet-36350.herokuapp.com/api/v1/events/2/tickets/
+PUT https://hidden-hamlet-36350.herokuapp.com/api/v1/events/id/tickets/id
 
 Eliminat Tickets
 Actualizar tickets
-DELETE https://hidden-hamlet-36350.herokuapp.com/api/v1/events/2/tickets
+DELETE https://hidden-hamlet-36350.herokuapp.com/api/v1/events/id/tickets/id
